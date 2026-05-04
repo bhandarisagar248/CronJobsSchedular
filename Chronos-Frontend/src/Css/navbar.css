@@ -1,0 +1,13 @@
+/* .navbar_link{
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background-color: #01d3dc;
+  transition: width 0.3s ease;
+} */
+
+.navbar_link:hover span {
+  width: 100%;
+}
