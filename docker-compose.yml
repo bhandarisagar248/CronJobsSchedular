@@ -4,7 +4,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./Chronos-Frontend
     container_name: chronos-frontend
     ports:
       - "5173:5173"
@@ -16,7 +16,7 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./Chronos-Job-Scheduling
     container_name: chronos-backend
     ports:
       - "8080:8080"

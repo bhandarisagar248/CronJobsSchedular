@@ -1,0 +1,45 @@
+stages:
+    - build
+    - push 
+    - deploy
+
+build_frontend:
+    stage: build
+    script:
+        - docker build -t cronjobfrontend:latest ./Chronos-Frontend
+    tags:
+        - dev
+
+build_backend:
+    stage: build
+    script:
+        - docker build -t cronjobbackend:latest ./Chronos-Job-Scheduling
+    tags:
+        - dev
+
+
+push_frontend:
+    stage: push
+    script:
+        - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
+        - docker image tag cronjobfrontend:latest $DOCKERHUB_USER/cronjobfrontend:latest
+        - docker push $DOCKERHUB_USER/cronjobfrontend:latest
+    tags:
+        - dev
+
+push_backend:
+    stage: push
+    script:
+        - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
+        - docker image tag cronjobbackend:latest $DOCKERHUB_USER/cronjobbackend:latest
+        - docker push $DOCKERHUB_USER/cronjobbackend:latest
+    tags:
+        - dev
+
+deploy_job:
+    stage: deploy
+    script:
+        - docker compose down
+        - docker compose up -d --build
+    tags:
+        - dev
