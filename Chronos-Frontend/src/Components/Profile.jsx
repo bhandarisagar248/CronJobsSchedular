@@ -11,7 +11,7 @@ import ContextAPI from "../ContextApi/ContextAPI";
 const Profile = () => {
   const navigate = useNavigate();
 
-  const { user,setUser,showNotification }=useContext(ContextAPI);
+  const { user,setUser,showNotification,notification }=useContext(ContextAPI);
 
   const imRef=useRef();
 
@@ -216,13 +216,22 @@ console.log("phoneNumber::"+fullPhoneNumber);
          showNotification("Image uploaded successfully:","success");
       setSelectedFile(null);
     } catch (error) {
-             showNotification("Error uploading Image:","success");
-      alert("Error uploading image: " + error.message);
+             showNotification("Error uploading Image. File is too large:","info");
     }
   };
 
   return (
     <div className="profile-container bg-gradient-to-b from-[#050505]/95 to-[#000000]/70 backdrop-blur-xl p-8">
+          {notification.visible && (
+        <div
+          className={`notification ${notification.type} visible`}
+        >
+          <span>{notification.message}</span>
+          <button className="close-btn" onClick={() => setNotification({ ...notification, visible: false })}>
+            &times;
+          </button>
+        </div>
+      )}
       <div className="profile-card bg-[#1f1f1f] rounded-lg shadow-xl p-8 max-w-xl mx-auto">
         <h2 className="text-3xl font-semibold text-white text-center mb-6">Profile Settings</h2>
 

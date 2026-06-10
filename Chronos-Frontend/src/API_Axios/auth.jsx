@@ -20,7 +20,7 @@ export const VerifyOpt=async(data)=>{
 
 // 🔑 FORGOT PASSWORD
 export const forgotPassword = async (email) => {
-  const res = await api.post("/auth/forgot-password", email);
+  const res = await api.post("/auth/forgot-password", {email:email});
   return res.data;
 };
 
