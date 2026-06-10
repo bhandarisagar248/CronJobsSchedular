@@ -15,6 +15,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.MeterRegistry;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +27,12 @@ public class WorkerService {
     private JobRepository jobRepository;
     @Autowired
     private JobExecutionRepository jobExecutionRepository;
+
+    @Autowired
+    private MetricsService metricsService;
+
+    @Autowired
+    private MeterRegistry meterRegistry;
 
     @Autowired
     private KafkaTemplate<String, Job> kafkaTemplate;
@@ -47,27 +55,54 @@ public class WorkerService {
         jobExecution.setJob(job);
         jobExecution.setStartTime(LocalDateTime.now());
 
+        Timer.Sample sample = Timer.start(meterRegistry);
+
+
         try {
 //            emailService.sendReminder(job.getEmail(), job.getName());
 //            sendReminderEmail(job);
             // Execute the job
             executeJob(job);
+            metricsService.success();
             jobExecution.setStatus("SUCCESS");
+            meterRegistry.counter(
+                    "chronojobs_job_success_total",
+                    "jobName",
+                    job.getName()
+            ).increment();
             // ✅ RESET retry count after success
             job.setRetryCount(0);
             jobExecution.setErrorMessage(null);
 
         } catch (Exception e) {
             // Retry logic and job failure handling
+            metricsService.failure();
+            meterRegistry.counter(
+                    "chronojobs_job_failure_total",
+                    "jobName",
+                    job.getName()
+            ).increment();
             handleJobFailure(job, jobExecution, e.getMessage());
         } finally {
             jobExecution.setEndTime(LocalDateTime.now());
+            sample.stop(
+                    Timer.builder("chronojobs_execution_duration")
+                            .description("Job execution duration")
+                            .register(meterRegistry)
+            );
             jobExecutionRepository.save(jobExecution);
         }
     }
 
     // Actual job execution logic (for example, sending an email)
     private void executeJob(Job job) throws MessagingException {
+
+        meterRegistry.counter(
+                "chronojobs_job_execution_total",
+                "jobName",
+                job.getName()
+        ).increment();
+
         // Simulate job execution (send an email)
         if (job.getName().trim().equalsIgnoreCase("SendReminderEmail")) {
             sendReminderEmail(job);
@@ -152,6 +187,9 @@ public class WorkerService {
             // Add back to Kafka for retry (simple retry logic)
             kafkaTemplate.send("job-topic", job); // ✅ correct retry
         } else {
+            meterRegistry.counter(
+                    "chronojobs_dead_letter_total"
+            ).increment();
             jobExecution.setStatus("FAILED");
             jobExecution.setErrorMessage("Failed after " + MAX_RETRIES + " attempts: " + errorMessage);
             // 💀 Send to Dead Letter Queue

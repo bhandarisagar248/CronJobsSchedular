@@ -1,5 +1,6 @@
 package com.chronos.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class JobExecution {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
+    @JsonBackReference
     private Job job;
 
     private String status; // SUCCESS, FAILED

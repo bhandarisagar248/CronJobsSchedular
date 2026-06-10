@@ -1,5 +1,7 @@
 package com.chronos.Entity;
 
+import com.chronos.Enum.JobStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,8 +27,15 @@ public class Job implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)  // Cascade delete
-//    private List<JobExecution> jobExecutions;
+    @OneToMany(
+            mappedBy = "job",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonManagedReference
+    private List<JobExecution> jobExecutions;
+
+
 
     private String email;
 
@@ -34,7 +43,8 @@ public class Job implements Serializable {
 
     private String cronExpression;
 
-    private String status; // ACTIVE, PAUSED
+    @Enumerated(EnumType.STRING)
+    private JobStatus status;
 
     private LocalDateTime nextRunTime;
 

@@ -1,6 +1,7 @@
 package com.chronos.Service;
 
 import com.chronos.Entity.Job;
+import com.chronos.Enum.JobStatus;
 import com.chronos.Repository.JobRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -31,7 +32,7 @@ public class SchedulerService {
     @Scheduled(fixedRate = 10000)
     public void scanAndPublishJobs() {
         List<Job> jobs = jobRepository
-                .findByStatusAndNextRunTimeBefore("ACTIVE", LocalDateTime.now());
+                .findByStatusAndNextRunTimeBefore(JobStatus.ACTIVE, LocalDateTime.now());
 
 
         for (Job job : jobs) {

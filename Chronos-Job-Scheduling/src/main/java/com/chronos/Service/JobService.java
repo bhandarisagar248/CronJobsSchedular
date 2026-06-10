@@ -3,6 +3,7 @@ package com.chronos.Service;
 import com.chronos.Components.JobMetrics;
 import com.chronos.DTO.JobDto;
 import com.chronos.Entity.Job;
+import com.chronos.Enum.JobStatus;
 import com.chronos.Repository.JobRepository;
 import com.chronos.Utils.CronUtils;
 import io.micrometer.core.instrument.Timer;
@@ -40,7 +41,7 @@ try {
     String normailzedCronExpression = CronUtils.normalizeCron(job.getCronExpression());
 
     job.setEmail(userEmail);
-    job.setStatus("ACTIVE");
+    job.setStatus(JobStatus.ACTIVE);
     job.setNextRunTime(CronUtils.nextExecution(normailzedCronExpression));
 
     Job saved = jobRepository.save(job);
@@ -116,7 +117,7 @@ try {
         }
 
         if (dto.getStatus() != null) {
-            job.setStatus(dto.getStatus());
+            job.setStatus(JobStatus.valueOf(dto.getStatus()));
         }
 
         if (dto.getPayload() != null) {

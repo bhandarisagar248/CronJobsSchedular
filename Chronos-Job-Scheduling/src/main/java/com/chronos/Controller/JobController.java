@@ -1,10 +1,17 @@
 package com.chronos.Controller;
 
+import com.chronos.DTO.DashboardMetricsDTO;
 import com.chronos.DTO.JobDto;
 import com.chronos.Entity.Job;
+import com.chronos.Enum.ExecutionStatus;
+import com.chronos.Enum.JobStatus;
+import com.chronos.Repository.JobExecutionHistoryRepository;
+import com.chronos.Repository.JobRepository;
+import com.chronos.Service.DashboardMetricsService;
 import com.chronos.Service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.protocol.HTTP;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +23,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JobController {
 
+
+    @Autowired
     private final JobService jobService;
+
+    @Autowired
+    private final DashboardMetricsService dashboardMetricsService;
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
@@ -40,7 +52,7 @@ public class JobController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+//    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<?> deleteJob(@PathVariable Long id) {
         try {
             jobService.deleteJob(id);
@@ -50,5 +62,21 @@ public class JobController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal server error");
         }
+    }
+
+
+    //implementation of grafana to get Metrices
+
+    @GetMapping("/dashboard/metrics")
+    public ResponseEntity<?> getMetrics() {
+        try{
+
+            DashboardMetricsDTO metrices= dashboardMetricsService.getMetrics();
+            return ResponseEntity.ok(metrices);
+        }catch (Exception e){
+            System.out.println("The error is"+e);
+            return ResponseEntity.status(500).body("Internal server error");
+        }
+
     }
 }
