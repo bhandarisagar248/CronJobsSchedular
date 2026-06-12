@@ -3,6 +3,8 @@ import ContextAPI from "./ContextAPI";
 import { loginUser,signupUser } from "../API_Axios/auth";
 import { VerifyOtp } from "../Components/VerifyOtp";
 import { useNavigate } from "react-router-dom";
+import { LoadMetrices } from "../API_Axios/metricesApi";
+import api from "../API_Axios/AxiosApi";
 
 const ContextState = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -14,6 +16,9 @@ const ContextState = ({ children }) => {
  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const [showLogin, setShowLogin] = useState(false);
+
+    const [metrics, setMetrics] = useState(null);
+    const [history, setHistory] = useState([]);
 
    const [notification, setNotification] = useState({
     message: "",
@@ -49,6 +54,42 @@ useEffect(() => {
     }
 }, []);
 
+
+  useEffect(() => {
+     loadMetrics();
+  }, [user]);
+
+    useEffect(() => {
+  loadHistory();
+}, [user]);
+
+
+
+
+    const loadMetrics = async () => {
+    try {
+const res = await api.get("/job/dashboard/metrics");
+  
+      setMetrics(res.data);
+  
+    } catch (err) {
+      console.error(err);
+      //show notification for error
+    }
+  };
+
+
+const loadHistory = async () => {
+  try {
+    const res = await api.get("/job/history");
+
+    setHistory(res.data);
+
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 // LOGIN
   const login = async (payload) => {
     setLoading(true);
@@ -65,7 +106,7 @@ useEffect(() => {
            setIsLoggedIn(true);
 
            //navigate to dashboard page 
-           navigate("/dashboard");
+           navigate("/metrics");
     } 
     
 catch (err) {
@@ -121,7 +162,7 @@ catch (err) {
 
 
   return (
-       <ContextAPI.Provider value={{ loading, login, signup, isLoggedIn, setIsLoggedIn, IsError, Error, SetIsError, SetError, user, setUser, setRefresh, showNotification, setNotification, notification, showLogin, setShowLogin }}>
+       <ContextAPI.Provider value={{ loading, login, signup, isLoggedIn, setIsLoggedIn, IsError, Error, SetIsError, SetError, user, setUser, setRefresh, showNotification, setNotification, notification, showLogin, setShowLogin, setMetrics, metrics, setHistory,history }}>
       {children}
     </ContextAPI.Provider>
   );

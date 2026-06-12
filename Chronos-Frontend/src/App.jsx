@@ -18,6 +18,7 @@ import Docs from './Components/Doc';
 import Footer  from './Components/Footer';
 import Profile from './Components/Profile';
 import ContextAPI from './ContextApi/ContextAPI';
+import DashboardMetrics from './Components/DashboardMetrics';
 
 function App() {
     const [showLogin, setShowLogin] = useState(false);
@@ -27,7 +28,6 @@ function App() {
     const[viewJob,setViewJob]=useState(false);
 
     //  const { showLogin, setShowLogin } = useContext(ContextAPI);
-
   return (
     <ContextState>
 
@@ -63,6 +63,7 @@ onClose={()=>SetShowCreatejob(false)} />
   
         
         <Route path="/" element={<Home />} />
+        <Route path='/metrics' element={ <DashboardMetrics />} />
         <Route path="/features" element={<Features />} />
         <Route path="/examples" element={<Examples />} />
         <Route path="/docs" element={<Docs />} />

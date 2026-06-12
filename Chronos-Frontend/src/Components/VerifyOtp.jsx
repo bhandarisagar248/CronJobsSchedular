@@ -87,7 +87,7 @@ if (!res || res.status !== 200) {
   
     setIsLoggedIn(true);
      //navigate to dashboard page 
-    navigate("/dashboard");
+    navigate("/metrics");
     
 }
 

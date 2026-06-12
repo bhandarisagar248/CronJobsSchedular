@@ -2,14 +2,16 @@ import { useState, useContext } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import ContextAPI from "../ContextApi/ContextAPI";
+import { useNavigate } from "react-router-dom";
 
 export const Login = ({ isOpen, onClose, onSignupOpen,onForgotOpen }) => {
-  const { login, loading,IsError,Error,SetIsError,SetError } = useContext(ContextAPI);
+  const { login,setUser,loading,IsError,Error,SetIsError,SetError,setIsLoggedIn } = useContext(ContextAPI);
 
   // Controlled form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [keepSignedIn, setKeepSignedIn] = useState(false);
+  const navigate=useNavigate();
 
   // const [IsError,SetIsError]=useState(false);
   // const [Error,SetError]=useState("");
@@ -59,12 +61,21 @@ const handleGoogleSuccess = async (credentialResponse) => {
     console.log("Login success:", res.data);
 
     // You can store JWT or user here
+localStorage.setItem("user", JSON.stringify(res.data.user));
+localStorage.setItem("token", res.data.token);
+
+setUser(res.data.user);
+
+
     onClose();
+    navigate("/metrics");
+    setIsLoggedIn(true);
 
   } catch (err) {
     console.error(err);
     SetIsError(true);
     SetError("Google login failed");
+    setIsLoggedIn(false);
   }
 };
 

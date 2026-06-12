@@ -1,13 +1,16 @@
 import { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { CreateJobModal } from "./CreateJobModal";
 import { getAllJob } from "../API_Axios/Job";
 import { updateJob } from "../API_Axios/Job";
 import { DeleteJob } from "../API_Axios/Job";
 import ContextAPI from "../ContextApi/ContextAPI";
+import DashboardMetrics from "./DashboardMetrics";
 import '../Css/Notification.css';
+import api from "../API_Axios/AxiosApi";
 
 export const Dashboard = ({ onJobCreate, onviewJob,setShowLogin }) => {
-  const{user, setRefresh,showNotification,setNotification,notification}=useContext(ContextAPI)
+  const{user, setRefresh,showNotification,setNotification,notification,setMetrics,metrics}=useContext(ContextAPI)
       // Notification State
   // const [notification, setNotification] = useState({
   //   message: "",
@@ -62,6 +65,8 @@ useEffect(() => {
       setJobs([]); // clear jobs on error
     }
   };
+
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -155,7 +160,7 @@ const DeleteJobFun = async (job, e) => {
       <div className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">
-            Scheduler Dashboard
+            Scheduler Jobs
           </h1>
           <p className="text-white/40 text-sm mt-1">
             Manage and automate your jobs
@@ -261,12 +266,13 @@ const DeleteJobFun = async (job, e) => {
             </tbody>
           </table>
           
-         <iframe
+         {/* <iframe
   src="http://localhost:3000/public-dashboards/8bf13bf88b134fbe9334e0f7c55c54f9"
   width="100%"
   height="900"
   style={{ border: "none" }}
-/>
+/> */}
+
         </div>
         
       )}

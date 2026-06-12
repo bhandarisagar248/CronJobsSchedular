@@ -1,0 +1,450 @@
+
+/* ==========================
+   Calendar Container
+========================== */
+
+.calendar-card {
+  width: 100%;
+
+  padding: 1.5rem;
+
+  border-radius: 24px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.015)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(18px);
+
+  -webkit-backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.35),
+    0 0 20px rgba(0, 245, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  overflow: hidden;
+
+  transition: all 0.3s ease;
+}
+
+.calendar-card:hover {
+  border-color: rgba(0, 245, 255, 0.15);
+
+  box-shadow:
+    0 15px 50px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(0, 245, 255, 0.08);
+}
+
+/* ==========================
+   Header
+========================== */
+
+.calendar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin-bottom: 1.5rem;
+}
+
+.calendar-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  color: white;
+
+  letter-spacing: -0.02em;
+}
+
+.calendar-header span {
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 0.92rem;
+}
+
+/* ==========================
+   Calendar Root
+========================== */
+
+.rbc-calendar {
+  color: white;
+  min-height: 522px;
+}
+
+/* ==========================
+   Toolbar
+========================== */
+
+.rbc-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-bottom: 1.5rem;
+}
+
+.rbc-toolbar-label {
+  font-size: 1.3rem;
+  font-weight: 700;
+
+  color: white;
+}
+
+/* buttons */
+
+.rbc-btn-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.rbc-toolbar button {
+  height: 40px;
+
+  padding: 0 14px;
+
+  background: rgba(255, 255, 255, 0.04) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+
+  border-radius: 12px !important;
+
+  color: white !important;
+
+  font-size: 0.9rem;
+
+  font-weight: 500;
+
+  transition: all 0.25s ease;
+}
+
+.rbc-toolbar button:hover {
+  background: rgba(0, 245, 255, 0.08) !important;
+
+  border-color: rgba(0, 245, 255, 0.4) !important;
+
+  transform: translateY(-1px);
+}
+
+.rbc-toolbar button:active {
+  transform: scale(0.97);
+}
+
+.rbc-active {
+  background: #00f5ff !important;
+
+  color: black !important;
+
+  font-weight: 700 !important;
+
+  border-color: #00f5ff !important;
+
+  box-shadow: 0 0 12px rgba(0, 245, 255, 0.4);
+}
+
+/* ==========================
+   Header Row
+========================== */
+
+.rbc-header {
+  padding: 14px 10px;
+
+  background: rgba(255, 255, 255, 0.03);
+
+  color: #00f5ff;
+
+  font-size: 0.85rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.05em;
+
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================
+   Grid
+========================== */
+
+.rbc-month-view,
+.rbc-time-view {
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rbc-month-row,
+.rbc-time-content,
+.rbc-time-header {
+  border-color: rgba(255, 255, 255, 0.04);
+}
+
+.rbc-month-row {
+  flex: 0 0 75px !important;
+  min-height: 75px !important;
+}
+
+/* day cells */
+
+.rbc-day-bg {
+  background: transparent;
+
+  transition: all 0.25s ease;
+}
+.rbc-row-bg{
+    height: 75px !important;
+}
+
+.rbc-day-bg:hover {
+  background: rgba(0, 245, 255, 0.04);
+}
+
+.rbc-date-cell {
+  padding: 8px;
+}
+
+.rbc-date-cell a {
+  color: rgba(255, 255, 255, 0.75);
+
+  text-decoration: none;
+
+  font-weight: 500;
+}
+
+/* today */
+
+.rbc-today {
+  background: #718b8c61 !important;
+}
+
+.rbc-today .rbc-button-link {
+  color: #00f5ff;
+  font-weight: 700;
+}
+
+/* outside month */
+
+.rbc-off-range-bg {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.rbc-off-range {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ==========================
+   Events
+========================== */
+
+.rbc-event {
+  border: none !important;
+
+  border-radius: 10px !important;
+
+  background: linear-gradient(
+    135deg,
+    #00f5ff,
+    #00c8ff
+  ) !important;
+
+  color: #000 !important;
+
+  font-size: 0.8rem;
+
+  font-weight: 700;
+
+  padding: 4px 8px;
+
+  box-shadow:
+    0 0 10px rgba(0, 245, 255, 0.25);
+
+  transition: all 0.25s ease;
+}
+
+.rbc-event:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 0 18px rgba(0, 245, 255, 0.5);
+}
+
+.rbc-selected {
+  background: linear-gradient(
+    135deg,
+    #00f5ff,
+    #0ea5e9
+  ) !important;
+}
+
+/* ==========================
+   Time View
+========================== */
+
+.rbc-time-slot {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.rbc-timeslot-group {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================
+   Scrollbar
+========================== */
+
+.rbc-time-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rbc-time-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.rbc-time-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+
+  border-radius: 20px;
+}
+
+/* ==========================
+   Mobile
+========================== */
+
+@media (max-width: 1024px) {
+  .rbc-calendar {
+    min-height: 650px;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-card {
+    padding: 1rem;
+  }
+
+  .rbc-toolbar {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 0.8rem;
+  }
+
+  .rbc-toolbar-label {
+    text-align: center;
+  }
+
+  .rbc-btn-group {
+    justify-content: center;
+
+    flex-wrap: wrap;
+  }
+
+  .rbc-toolbar button {
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .rbc-calendar {
+    min-height: 550px;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .calendar-header span {
+    font-size: 0.8rem;
+  }
+
+  .rbc-calendar {
+    min-height: 500px;
+  }
+
+  .rbc-toolbar button {
+    font-size: 0.8rem;
+    padding: 0 10px;
+  }
+}
+
+
+/* Allow event overflow but keep layout intact */
+.rbc-month-view {
+  overflow: visible !important;
+}
+
+/* Keep your compact row height but allow hover expansion */
+.rbc-month-row {
+  overflow: visible !important;
+  position: relative;
+}
+
+/* Default state: keep events clipped inside cell */
+.rbc-row-content {
+  overflow: hidden !important;
+  max-height: 75px;
+}
+
+/* Hover: expand and reveal ALL events in that day */
+.rbc-month-row:hover {
+  z-index: 10;
+}
+
+/* On hover, show full event stack like dropdown */
+.rbc-month-row:hover .rbc-row-content {
+  overflow: visible !important;
+  max-height: unset !important;
+
+  background: rgba(0, 0, 0, 0.65);
+
+  backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(0, 245, 255, 0.15);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+  border-radius: 10px;
+
+  padding: 4px;
+}
+
+/* Make events stack nicely when expanded */
+.rbc-row-content .rbc-event {
+  margin-bottom: 2px;
+}
+
+/* Smooth premium animation */
+.rbc-row-content {
+  transition: all 0.2s ease-in-out;
+}
+
+
+
+.event-success {
+  background: #22c55e !important;
+  color: white !important;
+}
+
+.event-failed {
+  background: #ef4444 !important;
+  color: white !important;
+}
+
+.event-paused {
+  background: #f59e0b !important;
+  color: black !important;
+}
+
+.event-completed {
+  background: #3b82f6 !important;
+  color: white !important;
+}

@@ -292,18 +292,34 @@ export const Navbar = ({ onLoginClick, onSignupClick }) => {
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-x-8 text-sm font-medium">
                     { user && (
+                      <div className="md:flex items-center gap-x-8">
+              <button
+                key="/metrics"
+                onClick={() => handleNavClick("/metrics")}
+                className="navbar_link relative text-white/90 hover:text-white transition-colors duration-300"
+              >
+                Dashboard
+                <span 
+                  className={`absolute left-0 -bottom-1 h-[2px] bg-[#01d3dc] transition-all duration-300 ${
+                    location.pathname === "/metrics" ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                ></span>
+              </button>
+
               <button
                 key="/dashboard"
                 onClick={() => handleNavClick("/dashboard")}
                 className="navbar_link relative text-white/90 hover:text-white transition-colors duration-300"
               >
-                Dashboard
+                Jobs
                 <span 
                   className={`absolute left-0 -bottom-1 h-[2px] bg-[#01d3dc] transition-all duration-300 ${
                     location.pathname === "/dashboard" ? "w-full" : "w-0 group-hover:w-full"
                   }`}
                 ></span>
               </button>
+
+              </div>
               
                     )
           }
@@ -385,19 +401,33 @@ export const Navbar = ({ onLoginClick, onSignupClick }) => {
         <div className="md:hidden px-8 pb-6 border-t border-white/10 bg-gradient-to-b from-[#050505]/90 to-[#000000]/80 backdrop-blur-xl rounded-b-xl shadow-xl">
           <div className="flex flex-col gap-y-4 pt-4 text-sm font-medium">
                                 { user && (
+
+                                  <div className="flex flex-col gap-y-4">
+              <button
+                key="/metrics"
+                onClick={() => handleNavClick("/metrics")}
+                className="navbar_link relative text-white/90 hover:text-white text-left transition-colors duration-300"
+              >
+                Dashboard
+                <span 
+                  className={`absolute left-0 -bottom-1 h-[2px] bg-[#01d3dc] transition-all duration-300 ${
+                    location.pathname === "/metrics" ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                ></span>
+              </button>
               <button
                 key="/dashboard"
                 onClick={() => handleNavClick("/dashboard")}
                 className="navbar_link relative text-white/90 hover:text-white text-left transition-colors duration-300"
               >
-                Dashboard
+                Jobs
                 <span 
                   className={`absolute left-0 -bottom-1 h-[2px] bg-[#01d3dc] transition-all duration-300 ${
                     location.pathname === "/dashboard" ? "w-full" : "w-0 group-hover:w-full"
                   }`}
                 ></span>
               </button>
-              
+              </div>
                     )
           }
             {navLinks.map((link) => {
