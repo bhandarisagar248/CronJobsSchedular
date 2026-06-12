@@ -5,6 +5,7 @@ import com.chronos.Entity.Job;
 import com.chronos.Entity.JobExecution;
 import com.chronos.Repository.JobExecutionRepository;
 import com.chronos.Repository.JobRepository;
+import io.micrometer.core.instrument.Counter;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ public class WorkerService {
 //            sendReminderEmail(job);
             // Execute the job
             executeJob(job);
-            metricsService.success();
+            metricsService.incrementSuccess();
             jobExecution.setStatus("SUCCESS");
             meterRegistry.counter(
                     "chronojobs_job_success_total",
@@ -76,7 +77,7 @@ public class WorkerService {
 
         } catch (Exception e) {
             // Retry logic and job failure handling
-            metricsService.failure();
+            metricsService.incrementFailure();
             meterRegistry.counter(
                     "chronojobs_job_failure_total",
                     "jobName",
@@ -185,7 +186,8 @@ public class WorkerService {
             System.out.println("Retrying job: " + job.getName() + " | Attempt: " + (retryCount + 1));
 
             // Add back to Kafka for retry (simple retry logic)
-            kafkaTemplate.send("job-topic", job); // ✅ correct retry
+            kafkaTemplate.send("job-topic", job);
+            Counter.builder("chronos.scheduler.retry");// ✅ correct retry
         } else {
             meterRegistry.counter(
                     "chronojobs_dead_letter_total"
@@ -194,6 +196,7 @@ public class WorkerService {
             jobExecution.setErrorMessage("Failed after " + MAX_RETRIES + " attempts: " + errorMessage);
             // 💀 Send to Dead Letter Queue
             kafkaTemplate.send("job-failed", job);
+            Counter.builder("chronos.scheduler.deadletter");
             System.out.println("Job failed after maximum retries: " + job.getName());
         }
     }

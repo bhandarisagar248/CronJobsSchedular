@@ -2,7 +2,9 @@ package com.chronos.Controller;
 
 import com.chronos.DTO.DashboardMetricsDTO;
 import com.chronos.DTO.JobDto;
+import com.chronos.DTO.JobHistoryDTO;
 import com.chronos.Entity.Job;
+import com.chronos.Entity.JobExecutionHistory;
 import com.chronos.Enum.ExecutionStatus;
 import com.chronos.Enum.JobStatus;
 import com.chronos.Repository.JobExecutionHistoryRepository;
@@ -11,6 +13,7 @@ import com.chronos.Service.DashboardMetricsService;
 import com.chronos.Service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.protocol.HTTP;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +32,8 @@ public class JobController {
 
     @Autowired
     private final DashboardMetricsService dashboardMetricsService;
+
+
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
@@ -78,5 +83,11 @@ public class JobController {
             return ResponseEntity.status(500).body("Internal server error");
         }
 
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<?> gethistoryjobs(){
+        List<JobHistoryDTO> result= dashboardMetricsService.getJobHistory();
+        return ResponseEntity.ok(result);
     }
 }

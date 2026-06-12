@@ -22,18 +22,18 @@ import java.util.List;
 public class JobService {
 
     private final JobRepository jobRepository;
-    private final JobMetrics jobMetrics;
+    private final MetricsService metricsService;
 
-    public JobService(JobRepository jobRepository, JobMetrics jobMetrics) {
+    public JobService(JobRepository jobRepository, MetricsService metricsService) {
         this.jobRepository = jobRepository;
-        this.jobMetrics = jobMetrics;
+        this.metricsService = metricsService;
     }
 
 
     @Transactional
     public Job createJob(Job job) {
 
-        Timer.Sample sample = jobMetrics.startTimer();
+        Timer.Sample sample = metricsService.startTimer();
 try {
     String userEmail = SecurityContextHolder.getContext()
             .getAuthentication()
@@ -46,15 +46,16 @@ try {
 
     Job saved = jobRepository.save(job);
 
-    jobMetrics.incrementJobsCreated();
-
+//    jobMetrics.incrementJobsCreated();\
+    metricsService.incrementCreated();
+    updateGauges();
     return saved;
 }catch (Exception e){
     log.error("Failed to create job for user [{}]: {}", e.getMessage(), e);
-    jobMetrics.recordFailure();
+    metricsService.incrementFailure();
     throw e;
 } finally {
-    jobMetrics.stopTimer(sample);
+    metricsService.stopTimer(sample);
 }
     }
 
@@ -62,7 +63,7 @@ try {
     @Transactional
     public Job updateJob(Long jobId, Job updatedJob) {
 
-        Timer.Sample sample = jobMetrics.startTimer();
+        Timer.Sample sample = metricsService.startTimer();
 
         try {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -77,11 +78,11 @@ try {
             // update fields
             return jobRepository.save(job);
     } catch (Exception e) {
-        jobMetrics.recordFailure();
+        metricsService.incrementFailure();
         log.error("Failed to update job id=[{}]: {}", jobId, e.getMessage(), e);
         throw e;
     } finally {
-        jobMetrics.stopTimer(sample);
+        metricsService.stopTimer(sample);
     }
     }
 
@@ -99,7 +100,7 @@ try {
     @Transactional
     public Job updateJob(Long id, JobDto dto) {
 
-        Timer.Sample sample = jobMetrics.startTimer();
+        Timer.Sample sample = metricsService.startTimer();
 
         try {
         Job job = jobRepository.findById(id)
@@ -135,32 +136,34 @@ try {
 
         return jobRepository.save(job);
         } catch (Exception e) {
-            jobMetrics.recordFailure();
+            metricsService.incrementFailure();
             log.error("Failed to update job id=[{}]: {}", id, e.getMessage(), e);
             throw e;
         } finally {
-            jobMetrics.stopTimer(sample);
+            metricsService.stopTimer(sample);
         }
     }
 
 
     @Transactional
     public void deleteJob(Long id) {
-        Timer.Sample sample = jobMetrics.startTimer();
+        Timer.Sample sample = metricsService.startTimer();
         try{
         if (!jobRepository.existsById(id)) {
             throw new RuntimeException("Job with id " + id + " not found");
         }
 
         jobRepository.deleteById(id);
+            metricsService.incrementDeleted();
+            updateGauges();
         // Optional: add audit log here
         System.out.println("Job deleted: " + id);
         } catch (Exception e) {
-            jobMetrics.recordFailure();
+            metricsService.incrementFailure();
             log.error("Failed to delete job id=[{}]: {}", id, e.getMessage(), e);
             throw e;
         } finally {
-            jobMetrics.stopTimer(sample);
+            metricsService.stopTimer(sample);
         }
     }
 
@@ -170,5 +173,43 @@ try {
         return jobRepository.findById(jobId)
                 .orElseThrow(() -> new ResourceNotFoundException("Job with id not found"));
     }
+
+    //to update the metrices gauga
+    private void updateGauges() {
+
+String email=getCurrentUserEmail();
+
+        long total =
+                jobRepository.countByUser_Email(email);
+
+        long active =
+                jobRepository.countByUser_EmailAndStatus(
+                        email,
+                        JobStatus.ACTIVE
+                );
+
+        long paused =
+                jobRepository.countByUser_EmailAndStatus(
+                        email,
+                        JobStatus.PAUSED
+                );
+
+        metricsService.updateDashboardMetrics(
+                total,
+                active,
+                paused
+        );
+    }
+
+    private String getCurrentUserEmail() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null) {
+            return null; // or throw custom exception
+        }
+
+        return auth.getName();
+    }
+
 
 }

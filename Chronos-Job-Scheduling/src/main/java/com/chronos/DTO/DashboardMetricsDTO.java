@@ -1,5 +1,6 @@
 package com.chronos.DTO;
 
+import com.chronos.Enum.HealthStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,4 +23,12 @@ public class DashboardMetricsDTO {
     private long failedExecutions;
 
     private double successRate;
+
+    private double failureRate;
+
+    private long executionsToday;
+
+    private double healthScore;
+
+    private HealthStatus healthStatus;
 }

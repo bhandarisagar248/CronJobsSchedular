@@ -119,6 +119,9 @@ public class AuthService {
                     newUser.setOtpExpiry(null);
                     newUser.setPassword("");
 
+                    Role role = this.roleRepo.findById(AppConstant.NORMAL_USER).get();
+                    newUser.getRoles().add(role);
+
                     return repository.save(newUser);
                 });
 

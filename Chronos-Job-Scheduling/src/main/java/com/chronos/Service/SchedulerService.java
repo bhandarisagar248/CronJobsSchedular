@@ -3,6 +3,7 @@ package com.chronos.Service;
 import com.chronos.Entity.Job;
 import com.chronos.Enum.JobStatus;
 import com.chronos.Repository.JobRepository;
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.quartz.CronExpression;
@@ -51,6 +52,7 @@ public class SchedulerService {
                     kafkaTemplate.send("job-topic", job);
                     updateJobNextRunTime(job);
                     jobRepository.save(job);
+                    Counter.builder("chronos.scheduler.triggered");
                 }
                 finally {
                     lockService.releaseLock(lockKey);
@@ -66,12 +68,14 @@ public class SchedulerService {
             // Validate the cron expression
             if (!CronExpression.isValidExpression(job.getCronExpression())) {
                 System.out.println("Invalid Cron Expression: " + job.getCronExpression());
+                Counter.builder("chronos.scheduler.timeout");
                 return false;
             }
 
             return true;
         } catch (Exception e) {
             System.out.println("Error parsing cron expression: " + e.getMessage());
+            Counter.builder("chronos.scheduler.timeout");
             return false;
         }
     }

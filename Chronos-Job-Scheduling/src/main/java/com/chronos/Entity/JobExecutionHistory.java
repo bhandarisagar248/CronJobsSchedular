@@ -1,12 +1,10 @@
 package com.chronos.Entity;
-
 import ch.qos.logback.classic.spi.Configurator;
 import com.chronos.Enum.ExecutionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "job_execution_history")
 @Getter
@@ -35,6 +33,9 @@ public class JobExecutionHistory {
 
     private Long durationMs;
 
+    private LocalDateTime executedAt;
+
     @Column(length = 5000)
     private String errorMessage;
+
 }
